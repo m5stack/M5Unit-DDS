@@ -6,8 +6,8 @@ M5Stack-**UNIT DDS**
 
 ## Related Link
 
-[Docment & Datasheet](https://docs.m5stack.com/en/unit/dds)
+- [Document & Datasheet](https://docs.m5stack.com/en/unit/dds)
 
 ## License
 
-[M5_AD9833 - MIT](LICENSE)
+- [M5_AD9833 - MIT](LICENSE)
