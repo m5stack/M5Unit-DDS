@@ -1,24 +1,20 @@
 /*
 *******************************************************************************
 * Copyright (c) 2021 by M5Stack
-*                  Equipped with M5Core2 sample source code
-*                          配套  M5Core2 示例源代码
-* Visit the website for more information: https://docs.m5stack.com/en/unit/dds
+*                  Equipped with M5Core sample source code
+*                          配套  M5Core 示例源代码
+* Visit more information: https://docs.m5stack.com/en/unit/dds
 * 获取更多资料请访问: https://docs.m5stack.com/zh_CN/unit/dds
 *
-* describe: DDS.
-* date: 2022/6/18
+* Product: Unit DDS.
+* Date: 2022/7/8
 *******************************************************************************
 */
 #include "M5Stack.h"
-#include "M5_AD9833.h"
+#include "Unit_DDS.h"
+#include "WaveIcon.c"
 
-extern const unsigned char sine[11849];
-extern const unsigned char square[18080];
-extern const unsigned char triangle[22645];
-extern const unsigned char sawtooth[20193];
-
-DDSUnit dds;
+Unit_DDS dds;
 
 int phase     = 0;
 int freq      = 10000;
@@ -42,18 +38,18 @@ void displayInfo() {
 void changeWave(int expression) {
     switch (expression) {
         case 0:
-            dds.quickOUT(DDSUnit::kSINUSMode, freq, phase);
+            dds.quickOUT(Unit_DDS::kSINUSMode, freq, phase);
             break;
         case 1:
-            dds.quickOUT(DDSUnit::kSQUAREMode, freq, phase);
+            dds.quickOUT(Unit_DDS::kSQUAREMode, freq, phase);
             break;
         case 2:
-            dds.quickOUT(DDSUnit::kTRIANGLEMode, freq, phase);
+            dds.quickOUT(Unit_DDS::kTRIANGLEMode, freq, phase);
             break;
         case 3:
             // SAWTOOTH WAVE Only support 13.6Khz
             freq = 13600;
-            dds.quickOUT(DDSUnit::kSAWTOOTHMode, freq, phase);
+            dds.quickOUT(Unit_DDS::kSAWTOOTHMode, freq, phase);
             break;
         default:
             break;
