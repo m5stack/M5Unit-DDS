@@ -23,7 +23,7 @@ class Unit_DDS {
     void readDDSRegs(uint8_t addr, uint8_t* dataptr, uint8_t size);
 
    public:
-    enum DDSmode {
+    enum DDSmode {  // DDS output mode
         kReservedMode = 0,
         kSINUSMode,
         kTRIANGLEMode,
