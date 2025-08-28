@@ -36,8 +36,12 @@ public:
         kDCMode,
     };
 
-    Unit_DDS() {};
-    ~Unit_DDS() {};
+    Unit_DDS()
+    {
+    }
+    ~Unit_DDS()
+    {
+    }
 #if defined(CONFIG_IDF_TARGET_ESP32C6)
     int begin(TwoWire* p = &Wire);
 #else
