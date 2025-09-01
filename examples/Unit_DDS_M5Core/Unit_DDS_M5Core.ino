@@ -85,7 +85,7 @@ void loop()
     M5.update();
     if (M5.BtnA.wasPressed()) {
         freq += 10000;
-X        changeWave(modeIndex);
+        changeWave(modeIndex);
     }
     if (M5.BtnB.wasPressed()) {
         phase += 10;
