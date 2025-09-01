@@ -60,8 +60,8 @@ void setup()
 
     lcd.clear(TFT_DARKGREEN);
 
-    unit.writeFrequencyAndPhase(true, FREQ_BANK_1, true, 180);           // set BANK 1
-    unit.writeOutput(mode_table[mode_index], cur_bank, FREQ_BANK_0, 0);  // set and use BANK 0
+    unit.writeFrequencyAndPhase(true, FREQ_BANK_1, true, 180);           // Set freq and phase to BANK 1
+    unit.writeOutput(mode_table[mode_index], cur_bank, FREQ_BANK_0, 0);  // Set freq and phase to Bank 0 and use BANK 0
 
     lcd.setFont(&fonts::AsciiFont8x16);
     M5.Log.printf("Output:%s\n", mode_str[mode_index]);
