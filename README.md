@@ -18,7 +18,7 @@ It supports deep sleep mode, which can reduce the power consumption in the idle 
 
 
 ## M5UnitUnified
-Library for Unit ENV using [M5UnitUnified](https://github.com/m5stack/M5UnitUnified).  
+Library for Unit DDS using [M5UnitUnified](https://github.com/m5stack/M5UnitUnified).  
 M5UnitUnified is a library for unified handling of various M5 units products.
 
 ### Supported units 
@@ -32,7 +32,7 @@ M5UnitUnified is a library for unified handling of various M5 units products.
 See also [examples/UnitUnified](examples/UnitUnified)
 
 ### Doxygen document
-[GitHub Pages](https://m5stack.github.io/M5Unit-ENV/)
+[GitHub Pages](https://m5stack.github.io/M5Unit-DDS/)
 
 If you want to generate documents on your local machine, execute the following command
 
