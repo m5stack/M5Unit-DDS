@@ -12,7 +12,6 @@
 */
 #include "M5Stack.h"
 #include "Unit_DDS.h"
-#include "WaveIcon.c"
 
 Unit_DDS dds;
 
@@ -22,9 +21,16 @@ int modeIndex = 0;
 
 String modeName[] = {"Sine", "Square", "Triangle", "Sawtooth"};
 
+extern "C" {
+extern const unsigned char sine[];
+extern const unsigned char square[];
+extern const unsigned char triangle[];
+extern const unsigned char sawtooth[];
+}
 const unsigned char *waveIcon[] = {sine, square, triangle, sawtooth};
 
-void displayInfo() {
+void displayInfo()
+{
     M5.Lcd.fillRect(0, 120, 250, 120, TFT_BLACK);
     M5.Lcd.drawJpg(waveIcon[modeIndex], sizeof(waveIcon[modeIndex]));
     M5.Lcd.setTextColor(TFT_GREEN);
@@ -35,7 +41,8 @@ void displayInfo() {
     M5.Lcd.drawString("Freq:  " + String(freq), 10, 200);
 }
 
-void changeWave(int expression) {
+void changeWave(int expression)
+{
     switch (expression) {
         case 0:
             dds.quickOUT(Unit_DDS::kSINUSMode, freq, phase);
@@ -57,21 +64,24 @@ void changeWave(int expression) {
     displayInfo();
 }
 
-void uiInit() {
+void uiInit()
+{
     M5.Lcd.fillScreen(BLACK);
     M5.Lcd.fillTriangle(250, 200, 250, 230, 270, 215, TFT_GREEN);
     M5.Lcd.setTextFont(4);
     M5.Lcd.setTextDatum(CC_DATUM);
 }
 
-void setup() {
+void setup()
+{
     M5.begin(true, true, true, true);
     uiInit();
     dds.begin(&Wire);
     changeWave(modeIndex);
 }
 
-void loop() {
+void loop()
+{
     M5.update();
     if (M5.BtnA.wasPressed()) {
         freq += 10000;
