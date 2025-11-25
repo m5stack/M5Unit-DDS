@@ -1,0 +1,25 @@
+var classm5_1_1unit_1_1_unit_d_d_s =
+[
+    [ "config_t", "structm5_1_1unit_1_1_unit_d_d_s_1_1config__t.html", "structm5_1_1unit_1_1_unit_d_d_s_1_1config__t" ],
+    [ "config", "classm5_1_1unit_1_1_unit_d_d_s.html#a64004a2a4b057342350caab0bd6afdee", null ],
+    [ "config", "classm5_1_1unit_1_1_unit_d_d_s.html#a2c89118f228e7231be7bd963793b1aef", null ],
+    [ "frequency0", "classm5_1_1unit_1_1_unit_d_d_s.html#aa843dc8928d992c6b59dd0169ce908a5", null ],
+    [ "frequency1", "classm5_1_1unit_1_1_unit_d_d_s.html#a884ac0c53766ee6ecce20b8a222bbb89", null ],
+    [ "readDescription", "classm5_1_1unit_1_1_unit_d_d_s.html#ab39ad65225fe18a0a57eae02cac29c5d", null ],
+    [ "readMode", "classm5_1_1unit_1_1_unit_d_d_s.html#a64a5c5141d7241ed45747c6ae44e724e", null ],
+    [ "reset", "classm5_1_1unit_1_1_unit_d_d_s.html#ad4112134064cc154ad5b8aeae9602248", null ],
+    [ "sleep", "classm5_1_1unit_1_1_unit_d_d_s.html#a4c62a3f2e6db72006b29c5a8503f4121", null ],
+    [ "wakeup", "classm5_1_1unit_1_1_unit_d_d_s.html#a33032ccd5076bd848e15388e18767d22", null ],
+    [ "writeCurrent", "classm5_1_1unit_1_1_unit_d_d_s.html#ac8c41d7d2b6f64fb600234e3e81e0305", null ],
+    [ "writeCurrentFrequency", "classm5_1_1unit_1_1_unit_d_d_s.html#a15e5d41ec2d080e07de7eeda59a142f4", null ],
+    [ "writeCurrentPhase", "classm5_1_1unit_1_1_unit_d_d_s.html#a28132e5caf3fb54e916487b20f387cf5", null ],
+    [ "writeFrequency", "classm5_1_1unit_1_1_unit_d_d_s.html#abeabb1e4a853d34f88db8c7fbdef48f9", null ],
+    [ "writeFrequency0", "classm5_1_1unit_1_1_unit_d_d_s.html#adbb752be536e4230e123c5a2935fe87e", null ],
+    [ "writeFrequency1", "classm5_1_1unit_1_1_unit_d_d_s.html#a25e1ea6ec978552e8601c4775aa24bc5", null ],
+    [ "writeFrequencyAndPhase", "classm5_1_1unit_1_1_unit_d_d_s.html#a4681a1901e4c2989672e602ab459ec7b", null ],
+    [ "writeMode", "classm5_1_1unit_1_1_unit_d_d_s.html#ab4cf0138b17ddd8bb7bc6596d9a13834", null ],
+    [ "writeOutput", "classm5_1_1unit_1_1_unit_d_d_s.html#ac3338d2fcc5ef18ac38e6b89cc612bb4", null ],
+    [ "writePhase", "classm5_1_1unit_1_1_unit_d_d_s.html#a2a1f42b9e5440802029445de4f3aeefd", null ],
+    [ "writePhase0", "classm5_1_1unit_1_1_unit_d_d_s.html#a4aa572b596f8fa519dff2978b9f6080a", null ],
+    [ "writePhase1", "classm5_1_1unit_1_1_unit_d_d_s.html#aab7e348c875bf70acab5f03a31a0a4c8", null ]
+];
