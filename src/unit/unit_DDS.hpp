@@ -71,12 +71,12 @@ public:
 
     ///@name Settings for begin
     ///@{
-    /*! @brief Gets the configration */
+    /*! @brief Gets the configuration */
     inline config_t config()
     {
         return _cfg;
     }
-    //! @brief Set the configration
+    //! @brief Set the configuration
     inline void config(const config_t& cfg)
     {
         _cfg = cfg;
@@ -86,12 +86,12 @@ public:
     ///@name Properties
     ///@{
     //! @brief Gets written frequency 0 (Hz)
-    uint16_t frequency0() const
+    uint32_t frequency0() const
     {
         return _freq[0];
     }
     //! @brief Gets written frequency 1 (Hz)
-    uint16_t frequency1() const
+    uint32_t frequency1() const
     {
         return _freq[1];
     }
@@ -176,7 +176,7 @@ public:
       @brief Write the frequency and phase
       @param select_freq  Frequency target bank 0 if false, bank 1 if true
       @param freq Frequency(Hz) 0 - 1Mhz
-      @param select_freq  Phase target bank 0 if false, bank 1 if true
+      @param select_phase  Phase target bank 0 if false, bank 1 if true
       @param deg Phase (degree)
       @return True if successful
       @warning Frequency and phase settings are ignored for Mode::Sawtooth and Mode::DC
@@ -185,8 +185,8 @@ public:
                                 const uint16_t deg);
     /*!
       @brief Write which bank setting to use
-      @param select_freq  Frequecny using  bank 0 if false, bank 1 if true
-      @param select_freq  Phase using bank 0 if false, bank 1 if true
+      @param select_freq  Frequency using bank 0 if false, bank 1 if true
+      @param select_phase  Phase using bank 0 if false, bank 1 if true
       @return True if successful
       @warning Frequency and phase settings are ignored for Mode::Sawtooth and Mode::DC
      */
@@ -200,7 +200,7 @@ public:
     bool writeCurrentFrequency(const bool select);
     /*!
       @brief Write which bank phase setting to use
-      @param select_freq  Phase using bank 0 if false, bank 1 if true
+      @param select  Phase using bank 0 if false, bank 1 if true
       @return True if successful
       @warning Frequency and phase settings are ignored for Mode::Sawtooth and Mode::DC
      */
@@ -255,7 +255,7 @@ protected:
 private:
     config_t _cfg{};
     dds::Mode _mode{};
-    uint16_t _freq[2]{};
+    uint32_t _freq[2]{};
 };
 
 namespace dds {

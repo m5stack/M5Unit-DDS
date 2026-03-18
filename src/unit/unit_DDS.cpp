@@ -19,15 +19,15 @@ using namespace m5::unit::dds::command;
 namespace {
 
 constexpr char DESC[] = "ad9833";
-constexpr double MCLK{10000000.f};
+constexpr float MCLK{10000000.f};
 constexpr uint32_t MINIMUM_FREQ{0};
 constexpr uint32_t MAXIMUM_FREQ{1000000};
 
 // Calculate 28-bit FTW from out[Hz] to be output
 uint32_t calculate_ftw(const uint32_t out_hz)
 {
-    constexpr double scale = static_cast<double>(1ULL << 28);
-    uint32_t ftw           = static_cast<uint32_t>(llround(static_cast<double>(out_hz) * scale / MCLK));
+    constexpr float scale = static_cast<float>(1ULL << 28);
+    uint32_t ftw          = static_cast<uint32_t>(lroundf(static_cast<float>(out_hz) * scale / MCLK));
     return ftw & 0x0FFFFFFF;
 }
 
@@ -41,8 +41,7 @@ uint16_t calculate_phase(const uint16_t deg)
 
 inline bool is_valid_frequency(const uint32_t freq)
 {
-    //    return std::isfinite(freq) && freq >= MINIMUM_FREQ && freq <= MAXIMUM_FREQ;
-    return std::isfinite(freq) && freq <= MAXIMUM_FREQ;
+    return freq <= MAXIMUM_FREQ;
 }
 
 }  // namespace
