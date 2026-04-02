@@ -234,6 +234,9 @@ TEST_F(TestDDS, BeginConfig)
     Mode m{};
     EXPECT_TRUE(unit->readMode(m));
     EXPECT_EQ(m, Mode::Triangle);
+
+    // select=true so frequency is written to bank1
+    EXPECT_EQ(unit->frequency1(), 500000U);
 }
 
 TEST_F(TestDDS, ModeTransitionFreqRestore)
