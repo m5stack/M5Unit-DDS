@@ -57,6 +57,8 @@ public:
         uint16_t deg{0};                 //!< Phase if start output on begin
     };
 
+    //! @brief Constructor
+    //! @param addr I2C address
     explicit UnitDDS(const uint8_t addr = DEFAULT_ADDRESS) : Component(addr)
     {
         auto ccfg  = component_config();
@@ -67,6 +69,8 @@ public:
     {
     }
 
+    //! @brief Begin unit
+    //! @return True if successful
     virtual bool begin() override;
 
     ///@name Settings for begin
@@ -193,7 +197,7 @@ public:
     bool writeCurrent(const bool select_freq, const bool select_phase);
     /*!
       @brief Write which bank frequency setting to use
-      @param select_freq  Frequecny using  bank 0 if false, bank 1 if true
+      @param select_freq  Frequency using bank 0 if false, bank 1 if true
       @return True if successful
       @warning Frequency and phase settings are ignored for Mode::Sawtooth and Mode::DC
      */
@@ -222,7 +226,7 @@ public:
     /*!
       @brief Sleep
       @param mclk Sleep mclk (Keep output current value)
-      @param DAC Sleep DAC (Stop output)
+      @param DAC Sleep DAC (Stop DAC clock output)
       @return True if successful
      */
     bool sleep(const bool mclk = true, const bool DAC = true);

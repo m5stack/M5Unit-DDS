@@ -5,7 +5,7 @@
  */
 /*!
   @file M5UnitUnifiedDDS.h
-  @brief Main header of M5Unit-DDS using M5UnitUnfied
+  @brief Main header of M5Unit-DDS using M5UnitUnified
 */
 #ifndef M5_UNIT_UNIFIED_DDS_H
 #define M5_UNIT_UNIFIED_DDS_H

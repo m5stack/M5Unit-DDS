@@ -32,6 +32,8 @@ uint32_t calculate_ftw(const uint32_t out_hz)
 }
 
 // Calculate 11-bit PHASE from phase[deg]
+// Note (independent testing): The STM32 register accepts 12-bit (bit 11:0), but only
+// 11-bit (2048 steps) is effective for AD9833 output. Verified on hardware 2026-04-02.
 uint16_t calculate_phase(const uint16_t deg)
 {
     uint16_t d  = deg % 360;
@@ -104,7 +106,7 @@ bool UnitDDS::writeMode(const Mode mode)
         v               = (v & ~0x07) | m5::stl::to_underlying(mode);
         // *** From Firmware Implementation ***
         // Ctrl must also be re-written to reflect the mode change
-        // When SAWTOOH/DC mode is selected, the internal ferq is set to 0, so it is set back.
+        // When SAWTOOTH/DC mode is selected, the internal freq is set to 0, so it is set back.
         return write_register8(MODE_REG, v) && write_register8(CONTROL_REG, ctrl) &&
                (write_freq ? (writeFrequency0(_freq[0]) && writeFrequency1(_freq[1])) : true);
     }
@@ -152,14 +154,12 @@ bool UnitDDS::writeFrequencyAndPhase(const bool select_freq, const uint32_t freq
     uint32_t ftw = calculate_ftw(freq);
     uint16_t ph  = calculate_phase(deg);
     uint8_t buf[6]{};
-    buf[0] = ((ftw >> 24) & 0x0F) | (select_freq ? 0xC0 : 0x80);
-    buf[1] = (ftw >> 16) & 0xFF;
-    buf[2] = (ftw >> 8) & 0xFF;
-    buf[3] = ftw & 0xFF;
-    buf[4] = ((ph >> 8) & 0x07) | (select_phase ? 0xC0 : 0x80);
-    buf[5] = ph & 0xFF;
-    // M5_LIB_LOGE("%02X:%02X:%02X:%02X:%02X:%02X", buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
-
+    buf[0]                  = ((ftw >> 24) & 0x0F) | (select_freq ? 0xC0 : 0x80);
+    buf[1]                  = (ftw >> 16) & 0xFF;
+    buf[2]                  = (ftw >> 8) & 0xFF;
+    buf[3]                  = ftw & 0xFF;
+    buf[4]                  = ((ph >> 8) & 0x07) | (select_phase ? 0xC0 : 0x80);
+    buf[5]                  = ph & 0xFF;
     _freq[(int)select_freq] = 0;
     if (writeRegister(FREQUENCY_REG, buf, m5::stl::size(buf))) {
         _freq[(int)select_freq] = freq;
