@@ -121,4 +121,4 @@ jobs:
               version: ${{ matrix.platform-version }}
           libraries: ${{ steps.libs.outputs.yaml }}
           sketch-paths: |
-            - ${{ env.SKETCH_NAMES_FIND_START }}/${{ matrix.sketch }}
+            - ${{ env.SKETCH_NAMES_FIND_START }}/${{ matrix.unit }}/${{ matrix.sketch }}
