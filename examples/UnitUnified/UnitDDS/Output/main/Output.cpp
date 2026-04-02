@@ -27,8 +27,6 @@ const char* mode_str[] = {
 };
 uint8_t mode_index{};
 bool cur_bank{};
-// constexpr uint32_t FREQ_BANK_0{10000};
-// constexpr uint32_t FREQ_BANK_1{80000};
 constexpr uint32_t FREQ_BANK_0{10};
 constexpr uint32_t FREQ_BANK_1{80};
 
@@ -85,7 +83,7 @@ void setup()
         }
     }
 
-    M5_LOGI("M5UnitUnified has been begun");
+    M5_LOGI("M5UnitUnified initialized");
     M5_LOGI("%s", Units.debugInfo().c_str());
 
     lcd.fillScreen(TFT_DARKGREEN);
