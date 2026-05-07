@@ -1,10 +1,12 @@
 var classm5_1_1unit_1_1_unit_d_d_s =
 [
     [ "config_t", "structm5_1_1unit_1_1_unit_d_d_s_1_1config__t.html", "structm5_1_1unit_1_1_unit_d_d_s_1_1config__t" ],
+    [ "UnitDDS", "classm5_1_1unit_1_1_unit_d_d_s.html#aae07bc95fd6aafb23aba79f62a7146e3", null ],
+    [ "begin", "classm5_1_1unit_1_1_unit_d_d_s.html#afdd1f73696c7f9a8c75150141198e68a", null ],
     [ "config", "classm5_1_1unit_1_1_unit_d_d_s.html#a64004a2a4b057342350caab0bd6afdee", null ],
     [ "config", "classm5_1_1unit_1_1_unit_d_d_s.html#a2c89118f228e7231be7bd963793b1aef", null ],
-    [ "frequency0", "classm5_1_1unit_1_1_unit_d_d_s.html#aa843dc8928d992c6b59dd0169ce908a5", null ],
-    [ "frequency1", "classm5_1_1unit_1_1_unit_d_d_s.html#a884ac0c53766ee6ecce20b8a222bbb89", null ],
+    [ "frequency0", "classm5_1_1unit_1_1_unit_d_d_s.html#a8560e1fc95d6b222a8325f96632307bf", null ],
+    [ "frequency1", "classm5_1_1unit_1_1_unit_d_d_s.html#a8dbfd2466c49ef60edf7eb9bf4fc86ae", null ],
     [ "readDescription", "classm5_1_1unit_1_1_unit_d_d_s.html#ab39ad65225fe18a0a57eae02cac29c5d", null ],
     [ "readMode", "classm5_1_1unit_1_1_unit_d_d_s.html#a64a5c5141d7241ed45747c6ae44e724e", null ],
     [ "reset", "classm5_1_1unit_1_1_unit_d_d_s.html#ad4112134064cc154ad5b8aeae9602248", null ],
