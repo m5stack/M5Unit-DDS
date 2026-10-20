@@ -39,6 +39,9 @@ build/
 cmake-build-*/
 managed_components/
 
+# clangd LSP (personal, environment dependent)
+.clangd
+
 # PlatformIO
 .pio/
 
