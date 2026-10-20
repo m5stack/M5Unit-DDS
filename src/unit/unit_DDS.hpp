@@ -31,7 +31,7 @@ enum class Mode : uint8_t {
     Triangle,  //!< Triangle wave
     Square,    //!< Square wave
     Sawtooth,  //!< Sawtooth wave (M5 extension)
-               //!< Fixed at frequency 13600 and phase 0
+               //!< Fixed at frequency 13600 Hz and phase 0
     DC,        //!< DC (M5 extension)
 };
 
@@ -52,7 +52,7 @@ public:
     struct config_t {
         bool start_output{true};         //!< Start output on begin if true
         dds::Mode mode{dds::Mode::Sin};  //!< Output mode if start output on begin
-        bool select{};                   //!< Using bank if start output on begin
+        bool select{};                   //!< Bank to use if start output on begin (false: bank 0, true: bank 1)
         uint32_t freq{10000};            //!< Frequency if start output on begin
         uint16_t deg{0};                 //!< Phase if start output on begin
     };
@@ -75,12 +75,16 @@ public:
 
     ///@name Settings for begin
     ///@{
-    /*! @brief Gets the configuration */
-    inline config_t config()
+    /*!
+      @brief Gets the configuration
+      @return Current configuration
+     */
+    inline config_t config() const
     {
         return _cfg;
     }
     //! @brief Set the configuration
+    //! @param cfg Configuration
     inline void config(const config_t& cfg)
     {
         _cfg = cfg;
@@ -90,11 +94,13 @@ public:
     ///@name Properties
     ///@{
     //! @brief Gets written frequency 0 (Hz)
+    //! @return Frequency (Hz)
     uint32_t frequency0() const
     {
         return _freq[0];
     }
     //! @brief Gets written frequency 1 (Hz)
+    //! @return Frequency (Hz)
     uint32_t frequency1() const
     {
         return _freq[1];
@@ -123,14 +129,14 @@ public:
     /*!
       @brief Write the frequency
       @param select Target bank 0 if false, bank 1 if true
-      @param freq Frequency(Hz) 0 - 1Mhz
+      @param freq Frequency (Hz) 0 - 1 MHz
       @return True if successful
       @warning Frequency and phase settings are ignored for Mode::Sawtooth and Mode::DC
      */
     bool writeFrequency(const bool select, const uint32_t freq);
     /*!
       @brief Write the frequency to bank 0
-      @param freq Frequency(Hz) 0 - 1Mhz
+      @param freq Frequency (Hz) 0 - 1 MHz
       @return True if successful
       @warning Frequency and phase settings are ignored for Mode::Sawtooth and Mode::DC
      */
@@ -140,7 +146,7 @@ public:
     }
     /*!
       @brief Write the frequency to bank 1
-      @param freq Frequency(Hz) 0 - 1Mhz
+      @param freq Frequency (Hz) 0 - 1 MHz
       @return True if successful
       @warning Frequency and phase settings are ignored for Mode::Sawtooth and Mode::DC
      */
@@ -179,7 +185,7 @@ public:
     /*!
       @brief Write the frequency and phase
       @param select_freq  Frequency target bank 0 if false, bank 1 if true
-      @param freq Frequency(Hz) 0 - 1Mhz
+      @param freq Frequency (Hz) 0 - 1 MHz
       @param select_phase  Phase target bank 0 if false, bank 1 if true
       @param deg Phase (degree)
       @return True if successful
@@ -197,7 +203,7 @@ public:
     bool writeCurrent(const bool select_freq, const bool select_phase);
     /*!
       @brief Write which bank frequency setting to use
-      @param select_freq  Frequency using bank 0 if false, bank 1 if true
+      @param select  Frequency using bank 0 if false, bank 1 if true
       @return True if successful
       @warning Frequency and phase settings are ignored for Mode::Sawtooth and Mode::DC
      */
@@ -216,8 +222,8 @@ public:
     /*!
       @brief Write mode and settings
       @param mode Mode
-      @param select Using bank
-      @param freq Frequency(Hz) 0 - 1Mhz
+      @param select Bank for both frequency and phase (false: bank 0, true: bank 1)
+      @param freq Frequency (Hz) 0 - 1 MHz
       @param deg Phase (degree)
       @return True if successful
       @warning Frequency and phase settings are ignored for Mode::Sawtooth and Mode::DC
@@ -226,10 +232,11 @@ public:
     /*!
       @brief Sleep
       @param mclk Sleep mclk (Keep output current value)
-      @param DAC Sleep DAC (Stop DAC clock output)
+      @param dac Sleep DAC (Stop DAC clock output)
       @return True if successful
+      @note Returns false if both mclk and dac are false
      */
-    bool sleep(const bool mclk = true, const bool DAC = true);
+    bool sleep(const bool mclk = true, const bool dac = true);
     /*!
       @brief Wake up
       @return True if successful

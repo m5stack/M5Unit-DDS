@@ -211,9 +211,9 @@ bool UnitDDS::writeOutput(const dds::Mode mode, const bool select, const uint32_
     return writeFrequencyAndPhase(select, freq, select, deg) && writeMode(mode) && writeCurrent(select, select);
 }
 
-bool UnitDDS::sleep(const bool mclk, const bool DAC)
+bool UnitDDS::sleep(const bool mclk, const bool dac)
 {
-    if (!mclk && !DAC) {
+    if (!mclk && !dac) {
         M5_LIB_LOGE("Sleep Target must be specified");
         return false;
     }
@@ -222,7 +222,7 @@ bool UnitDDS::sleep(const bool mclk, const bool DAC)
     if (read_control(ctrl)) {
         ctrl &= ~0x18;
         ctrl |= mclk ? 0x10 : 0x00;
-        ctrl |= DAC ? 0x08 : 0x00;
+        ctrl |= dac ? 0x08 : 0x00;
         return write_register8(CONTROL_REG, ctrl);
     }
     return false;
