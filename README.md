@@ -7,9 +7,7 @@ M5UnitUnified is a library for unified handling of various M5 units products.
 
 ### SKU:U105
 
-DDS is a signal source Unit. It uses the AD9833 programmable waveform generator + STM32F0 micro controller. Based on I2C communication interface (addr:0x31) It can easily control the signal source to output multiple waveforms (sine wave, triangle wave, square wave output, sawtooth wave, signal output amplitude 0-0.6V) and adjust the frequency and phase.
-
-It supports deep sleep mode, which can reduce the power consumption in the idle state. The Unit is suitable for the electronic circuit prototype design of various test instruments as a signal source.
+Unit DDS is a signal source Unit. It uses the AD9833 programmable waveform generator + STM32F0 control scheme. It provides an I2C communication interface (addr: 0x31) and operates by configuring registers in practical use. It allows easy control of the signal source to output various waveforms (sine wave, triangle wave, square wave output, sawtooth wave, signal output amplitude 0-0.6V), and to adjust frequency and phase. It also supports sleep strategies to further reduce power consumption when idle. This Unit is suitable for use as a signal source in the electronic circuit prototyping of various test instruments.
 
 ## Related Link
 
@@ -67,5 +65,17 @@ If you want to output Git commit hashes to html, do it for the git cloned folder
 
 ### Required
 - [Doxygen](https://www.doxygen.nl/)
-- [pcregrep](https://formulae.brew.sh/formula/pcre2)
 - [Git](https://git-scm.com/) (Output commit hash to html)
+
+## Legacy library
+
+The legacy library is a standalone driver that does not depend on M5UnitUnified. It is for Arduino only (it uses `Wire`).
+Do not use it at the same time as the M5UnitUnified library.
+
+### Include file
+```cpp
+#include <Unit_DDS.h>
+```
+
+### Examples
+- [Unit_DDS_M5Core](examples/Unit_DDS_M5Core)
