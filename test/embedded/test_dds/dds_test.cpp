@@ -112,7 +112,7 @@ TEST_F(TestDDS, Settings)
             for (auto&& db : bank_table) {
                 for (auto&& f : valid_freq_table) {
                     for (auto&& d : deg_table) {
-                        auto s = m5::utility::formatString("%u:%u %u:%u", fb, f, db, d);
+                        auto s = m5::utility::formatString("%u:%u %u:%u", fb, static_cast<unsigned>(f), db, d);
                         SCOPED_TRACE(s);
                         EXPECT_TRUE(unit->writeFrequencyAndPhase(fb, f, db, d));
                     }
@@ -124,7 +124,7 @@ TEST_F(TestDDS, Settings)
             for (auto&& db : bank_table) {
                 for (auto&& f : invalid_freq_table) {
                     for (auto&& d : deg_table) {
-                        auto s = m5::utility::formatString("%u:%u %u:%u", fb, f, db, d);
+                        auto s = m5::utility::formatString("%u:%u %u:%u", fb, static_cast<unsigned>(f), db, d);
                         SCOPED_TRACE(s);
                         EXPECT_FALSE(unit->writeFrequencyAndPhase(fb, f, db, d));
                     }
@@ -136,7 +136,7 @@ TEST_F(TestDDS, Settings)
         for (auto&& fb : bank_table) {
             EXPECT_TRUE(unit->writeCurrentFrequency(fb));
             uint8_t c = read_control(unit.get());
-            EXPECT_EQ((fb ? 0x40 : 0x00), c & (fb ? 0x40 : 0x00)) << c;
+            EXPECT_EQ((fb ? 0x40 : 0x00), c & 0x40) << static_cast<unsigned>(c);
 
             for (auto&& db : bank_table) {
                 auto s = m5::utility::formatString("%u:%u", fb, db);
@@ -144,12 +144,12 @@ TEST_F(TestDDS, Settings)
 
                 EXPECT_TRUE(unit->writeCurrent(fb, db));
                 c = read_control(unit.get());
-                EXPECT_EQ((fb ? 0x40 : 0x00), c & (fb ? 0x40 : 0x00)) << c;
-                EXPECT_EQ((db ? 0x20 : 0x00), c & (db ? 0x20 : 0x00)) << c;
+                EXPECT_EQ((fb ? 0x40 : 0x00), c & 0x40) << static_cast<unsigned>(c);
+                EXPECT_EQ((db ? 0x20 : 0x00), c & 0x20) << static_cast<unsigned>(c);
 
                 EXPECT_TRUE(unit->writeCurrentPhase(db));
                 c = read_control(unit.get());
-                EXPECT_EQ((db ? 0x20 : 0x00), c & (db ? 0x20 : 0x00)) << c;
+                EXPECT_EQ((db ? 0x20 : 0x00), c & 0x20) << static_cast<unsigned>(c);
             }
         }
     }
@@ -163,7 +163,8 @@ TEST_F(TestDDS, Output)
         for (auto&& b : bank_table) {
             for (auto&& f : valid_freq_table) {
                 for (auto&& d : deg_table) {
-                    auto s = m5::utility::formatString("%u:%u:%u:%u", m, b, f, d);
+                    auto s = m5::utility::formatString("%u:%u:%u:%u", static_cast<unsigned>(m), b,
+                                                       static_cast<unsigned>(f), d);
                     SCOPED_TRACE(s);
                     EXPECT_TRUE(unit->writeOutput(m, b, f, d));
                 }
@@ -175,7 +176,8 @@ TEST_F(TestDDS, Output)
         for (auto&& b : bank_table) {
             for (auto&& f : invalid_freq_table) {
                 for (auto&& d : deg_table) {
-                    auto s = m5::utility::formatString("%u:%u:%u:%u", m, b, f, d);
+                    auto s = m5::utility::formatString("%u:%u:%u:%u", static_cast<unsigned>(m), b,
+                                                       static_cast<unsigned>(f), d);
                     SCOPED_TRACE(s);
                     EXPECT_FALSE(unit->writeOutput(m, b, f, d));
                 }
@@ -190,7 +192,7 @@ TEST_F(TestDDS, FrequencyCache)
 
     // Verify frequency0()/frequency1() cache after writeFrequency
     for (auto&& f : valid_freq_table) {
-        auto s = m5::utility::formatString("freq:%u", f);
+        auto s = m5::utility::formatString("freq:%u", static_cast<unsigned>(f));
         SCOPED_TRACE(s);
         EXPECT_TRUE(unit->writeFrequency(false, f));
         EXPECT_EQ(unit->frequency0(), f);
@@ -210,24 +212,15 @@ TEST_F(TestDDS, FrequencyCache)
     EXPECT_EQ(unit->frequency0(), prev);
 }
 
-TEST_F(TestDDS, BeginConfig)
+TEST_F(TestDDS, BeginAppliesConfig)
 {
     SCOPED_TRACE(ustr);
 
-    // Verify begin() with start_output=false does not write output
+    // begin() with start_output=false does not write output
+    EXPECT_TRUE(unit->writeMode(Mode::Triangle));
     auto cfg         = unit->config();
     cfg.start_output = false;
-    unit->config(cfg);
-
-    // Re-begin should succeed without writing output
-    EXPECT_TRUE(unit->begin());
-
-    // Verify begin() with custom config
-    cfg.start_output = true;
-    cfg.mode         = Mode::Triangle;
-    cfg.select       = true;
-    cfg.freq         = 500000;
-    cfg.deg          = 180;
+    cfg.mode         = Mode::Sin;
     unit->config(cfg);
     EXPECT_TRUE(unit->begin());
 
@@ -235,7 +228,22 @@ TEST_F(TestDDS, BeginConfig)
     EXPECT_TRUE(unit->readMode(m));
     EXPECT_EQ(m, Mode::Triangle);
 
-    // select=true so frequency is written to bank1
+    // begin() with start_output=true applies the config
+    cfg.start_output = true;
+    cfg.mode         = Mode::Square;
+    cfg.select       = true;
+    cfg.freq         = 500000;
+    cfg.deg          = 180;  // There is no API to read the phase back, so deg is not verified
+    unit->config(cfg);
+    EXPECT_TRUE(unit->begin());
+
+    EXPECT_TRUE(unit->readMode(m));
+    EXPECT_EQ(m, Mode::Square);
+
+    // select=true: bank 1 is used for both frequency and phase, and the output is woken up
+    const uint8_t c{read_control(unit.get())};
+    EXPECT_EQ(0x60, c & 0x60) << static_cast<unsigned>(c);
+    EXPECT_EQ(0, c & 0x1C) << static_cast<unsigned>(c);
     EXPECT_EQ(unit->frequency1(), 500000U);
 }
 
@@ -261,6 +269,7 @@ TEST_F(TestDDS, ModeTransitionFreqRestore)
     EXPECT_EQ(m, Mode::Sin);
 
     // Cache should still hold the original frequencies
+    // (only the driver cache is checked: there is no API to read the frequency back)
     EXPECT_EQ(unit->frequency0(), freq0);
     EXPECT_EQ(unit->frequency1(), freq1);
 
@@ -279,9 +288,10 @@ TEST_F(TestDDS, RandomFrequency)
 
     EXPECT_TRUE(unit->writeMode(Mode::Sin));
 
+    // Only the driver cache is checked: there is no API to read the frequency back
     for (int i = 0; i < 10; ++i) {
         uint32_t f = esp_random() % (MAXIMUM_FREQ + 1);
-        auto s     = m5::utility::formatString("random freq:%u", f);
+        auto s     = m5::utility::formatString("random freq:%u", static_cast<unsigned>(f));
         SCOPED_TRACE(s);
         EXPECT_TRUE(unit->writeFrequency(false, f));
         EXPECT_EQ(unit->frequency0(), f);
@@ -312,19 +322,19 @@ TEST_F(TestDDS, Sleep)
 
     EXPECT_TRUE(unit->sleep(true, false));
     uint8_t c = read_control(unit.get());
-    EXPECT_EQ(0x10, c & 0x10) << c;
+    EXPECT_EQ(0x10, c & 0x10) << static_cast<unsigned>(c);
 
     EXPECT_TRUE(unit->sleep(false, true));
     c = read_control(unit.get());
-    EXPECT_EQ(0x08, c & 0x08) << c;
+    EXPECT_EQ(0x08, c & 0x08) << static_cast<unsigned>(c);
 
     EXPECT_TRUE(unit->sleep());  // true,true
     c = read_control(unit.get());
-    EXPECT_EQ(0x18, c & 0x18) << c;
+    EXPECT_EQ(0x18, c & 0x18) << static_cast<unsigned>(c);
 
     EXPECT_TRUE(unit->reset());
     c = read_control(unit.get());
-    EXPECT_EQ(0x04, c & 0x04) << c;
+    EXPECT_EQ(0x04, c & 0x04) << static_cast<unsigned>(c);
 
     EXPECT_TRUE(unit->wakeup());
     c = read_control(unit.get());
@@ -341,6 +351,8 @@ TEST_F(TestDDS, SleepWriteSettings)
 
     // Enter MCLK sleep
     EXPECT_TRUE(unit->sleep(true, false));
+    uint8_t c{read_control(unit.get())};
+    EXPECT_EQ(0x10, c & 0x18) << static_cast<unsigned>(c);
 
     // Write new frequency while sleeping — AD9833 accepts register writes during SLEEP1
     EXPECT_TRUE(unit->writeFrequency(false, 500000));
@@ -351,6 +363,8 @@ TEST_F(TestDDS, SleepWriteSettings)
 
     // Wakeup and verify mode is still correct
     EXPECT_TRUE(unit->wakeup());
+    c = read_control(unit.get());
+    EXPECT_EQ(0, c & 0x1C) << static_cast<unsigned>(c);
     Mode m{};
     EXPECT_TRUE(unit->readMode(m));
     EXPECT_EQ(m, Mode::Sin);
