@@ -71,14 +71,18 @@ void setup()
 
     lcd.fillScreen(TFT_DARKGREEN);
 
-    unit.writeFrequencyAndPhase(true, FREQ_BANK_1, true, 180);           // Set freq and phase to BANK 1
-    unit.writeOutput(mode_table[mode_index], cur_bank, FREQ_BANK_0, 0);  // Set freq and phase to Bank 0 and use BANK 0
+    // Set freq and phase to BANK 1, then set freq and phase to Bank 0 and use BANK 0
+    if (!unit.writeFrequencyAndPhase(true, FREQ_BANK_1, true, 180) ||
+        !unit.writeOutput(mode_table[mode_index], cur_bank, FREQ_BANK_0, 0)) {
+        M5_LOGE("Failed to write output");
+        m5::unit::wiring::failStop();
+    }
 
     lcd.setFont(&fonts::AsciiFont8x16);
     M5.Log.printf("Output:%s\n", mode_str[mode_index]);
     lcd.fillRect(0, 0, lcd.width(), 16 * 2, TFT_BLACK);
     lcd.setCursor(0, 0);
-    lcd.printf("Output:%s\nFreq:%u", mode_str[mode_index], (unsigned int)(cur_bank ? FREQ_BANK_1 : FREQ_BANK_0));
+    lcd.printf("Output:%s\nFreq:%u", mode_str[mode_index], static_cast<unsigned>(cur_bank ? FREQ_BANK_1 : FREQ_BANK_0));
 }
 
 void loop()
@@ -99,10 +103,12 @@ void loop()
         unit.wakeup();
 
         // Frequency and phase settings are ignored for Mode::Sawtooth and Mode::DC
-        M5.Log.printf("Output:%s Freq:%u\n", mode_str[mode_index], cur_bank ? FREQ_BANK_1 : FREQ_BANK_0);
+        M5.Log.printf("Output:%s Freq:%u\n", mode_str[mode_index],
+                      static_cast<unsigned>(cur_bank ? FREQ_BANK_1 : FREQ_BANK_0));
         lcd.fillRect(0, 0, lcd.width(), 16 * 2, TFT_BLACK);
         lcd.setCursor(0, 0);
-        lcd.printf("Output:%s\nFreq:%u", mode_str[mode_index], (unsigned int)(cur_bank ? FREQ_BANK_1 : FREQ_BANK_0));
+        lcd.printf("Output:%s\nFreq:%u", mode_str[mode_index],
+                   static_cast<unsigned>(cur_bank ? FREQ_BANK_1 : FREQ_BANK_0));
     }
 
     // Change using bank for freq/phase
@@ -111,10 +117,12 @@ void loop()
         cur_bank = !cur_bank;
         unit.writeCurrent(cur_bank, cur_bank);
 
-        M5.Log.printf("Output:%s Freq:%u\n", mode_str[mode_index], cur_bank ? FREQ_BANK_1 : FREQ_BANK_0);
+        M5.Log.printf("Output:%s Freq:%u\n", mode_str[mode_index],
+                      static_cast<unsigned>(cur_bank ? FREQ_BANK_1 : FREQ_BANK_0));
         lcd.fillRect(0, 0, lcd.width(), 16 * 2, TFT_BLACK);
         lcd.setCursor(0, 0);
-        lcd.printf("Output:%s\nFreq:%u", mode_str[mode_index], (unsigned int)(cur_bank ? FREQ_BANK_1 : FREQ_BANK_0));
+        lcd.printf("Output:%s\nFreq:%u", mode_str[mode_index],
+                   static_cast<unsigned>(cur_bank ? FREQ_BANK_1 : FREQ_BANK_0));
     }
 }
 
