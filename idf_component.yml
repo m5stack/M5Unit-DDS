@@ -8,9 +8,14 @@ dependencies:
   idf: ">=5.1"
   # M5UnitUnified is not yet on the ESP Component Registry, so reference the main
   # branch via git (switch to a version constraint after publish).
-  # M5Utility (used by the .cpp only) is pulled in through M5UnitUnified.
   m5stack/M5UnitUnified:
     git: https://github.com/m5stack/M5UnitUnified.git
+    version: main
+  # The library source includes M5Utility.hpp, so M5Utility is a direct dependency. Declaring it here
+  # does not conflict with the one M5UnitUnified pulls in: the same git URL and ref resolve to a
+  # single component.
+  m5stack/M5Utility:
+    git: https://github.com/m5stack/M5Utility.git
     version: main
 
 targets:
