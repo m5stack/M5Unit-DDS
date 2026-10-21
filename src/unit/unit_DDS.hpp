@@ -31,7 +31,7 @@ enum class Mode : uint8_t {
     Triangle,  //!< Triangle wave
     Square,    //!< Square wave
     Sawtooth,  //!< Sawtooth wave (M5 extension)
-               //!< Fixed at frequency 13600 Hz and phase 0
+               //!< Fixed at about 56 Hz (measured; the product page says 13.6 kHz) and phase 0
     DC,        //!< DC (M5 extension)
 };
 
