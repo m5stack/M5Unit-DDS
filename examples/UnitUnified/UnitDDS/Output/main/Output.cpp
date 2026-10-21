@@ -6,6 +6,8 @@
 /*
   Example using M5UnitUnified for UnitDDS
 */
+#include <cstdio>
+
 #include <M5Unified.h>
 #include <M5UnitUnified.h>
 #include <M5UnitUnifiedDDS.h>
@@ -29,6 +31,24 @@ uint8_t mode_index{};
 bool cur_bank{};
 constexpr uint32_t FREQ_BANK_0{10};
 constexpr uint32_t FREQ_BANK_1{80};
+
+// Show the current output. Frequency and phase settings are ignored for Mode::Sawtooth and Mode::DC
+void show_output()
+{
+    char freq[16]{};
+    const Mode m{mode_table[mode_index]};
+    if (m == Mode::Sawtooth) {
+        snprintf(freq, sizeof(freq), "fixed");
+    } else if (m == Mode::DC) {
+        snprintf(freq, sizeof(freq), "-");
+    } else {
+        snprintf(freq, sizeof(freq), "%u", static_cast<unsigned>(cur_bank ? FREQ_BANK_1 : FREQ_BANK_0));
+    }
+    M5.Log.printf("Output:%s Freq:%s\n", mode_str[mode_index], freq);
+    lcd.fillRect(0, 0, lcd.width(), 16 * 2, TFT_BLACK);
+    lcd.setCursor(0, 0);
+    lcd.printf("Output:%s\nFreq:%s", mode_str[mode_index], freq);
+}
 
 }  // namespace
 
@@ -60,10 +80,7 @@ void setup()
     }
 
     lcd.setFont(&fonts::AsciiFont8x16);
-    M5.Log.printf("Output:%s\n", mode_str[mode_index]);
-    lcd.fillRect(0, 0, lcd.width(), 16 * 2, TFT_BLACK);
-    lcd.setCursor(0, 0);
-    lcd.printf("Output:%s\nFreq:%u", mode_str[mode_index], static_cast<unsigned>(cur_bank ? FREQ_BANK_1 : FREQ_BANK_0));
+    show_output();
 }
 
 void loop()
@@ -83,13 +100,7 @@ void loop()
         unit.writeMode(mode_table[mode_index]);
         unit.wakeup();
 
-        // Frequency and phase settings are ignored for Mode::Sawtooth and Mode::DC
-        M5.Log.printf("Output:%s Freq:%u\n", mode_str[mode_index],
-                      static_cast<unsigned>(cur_bank ? FREQ_BANK_1 : FREQ_BANK_0));
-        lcd.fillRect(0, 0, lcd.width(), 16 * 2, TFT_BLACK);
-        lcd.setCursor(0, 0);
-        lcd.printf("Output:%s\nFreq:%u", mode_str[mode_index],
-                   static_cast<unsigned>(cur_bank ? FREQ_BANK_1 : FREQ_BANK_0));
+        show_output();
     }
 
     // Change using bank for freq/phase
@@ -98,12 +109,7 @@ void loop()
         cur_bank = !cur_bank;
         unit.writeCurrent(cur_bank, cur_bank);
 
-        M5.Log.printf("Output:%s Freq:%u\n", mode_str[mode_index],
-                      static_cast<unsigned>(cur_bank ? FREQ_BANK_1 : FREQ_BANK_0));
-        lcd.fillRect(0, 0, lcd.width(), 16 * 2, TFT_BLACK);
-        lcd.setCursor(0, 0);
-        lcd.printf("Output:%s\nFreq:%u", mode_str[mode_index],
-                   static_cast<unsigned>(cur_bank ? FREQ_BANK_1 : FREQ_BANK_0));
+        show_output();
     }
 }
 
