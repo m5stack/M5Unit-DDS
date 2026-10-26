@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['readdescription_0',['readDescription',['../classm5_1_1unit_1_1_unit_d_d_s.html#ab39ad65225fe18a0a57eae02cac29c5d',1,'m5::unit::UnitDDS']]],
-  ['readmode_1',['readMode',['../classm5_1_1unit_1_1_unit_d_d_s.html#a64a5c5141d7241ed45747c6ae44e724e',1,'m5::unit::UnitDDS']]],
-  ['reserved_2',['Reserved',['../unit___d_d_s_8hpp.html#a7456841d2c9bf3ad30d0672c90263303a942d4e37dd5607ab68e54755540d4a47',1,'m5::unit::dds']]],
-  ['reset_3',['reset',['../classm5_1_1unit_1_1_unit_d_d_s.html#ad4112134064cc154ad5b8aeae9602248',1,'m5::unit::UnitDDS']]]
+  ['m5_0',['m5',['../namespacem5.html',1,'']]],
+  ['m5unit_20dds_1',['M5Unit-DDS',['../index.html',1,'']]],
+  ['m5unitunifieddds_2ehpp_2',['M5UnitUnifiedDDS.hpp',['../_m5_unit_unified_d_d_s_8hpp.html',1,'']]],
+  ['mode_3',['Mode',['../unit___d_d_s_8hpp.html#a7456841d2c9bf3ad30d0672c90263303',1,'m5::unit::dds']]],
+  ['mode_4',['mode',['../structm5_1_1unit_1_1_unit_d_d_s_1_1config__t.html#a9fbcd2e39392f9512a2d5b42b6ecde39',1,'m5::unit::UnitDDS::config_t']]]
 ];
