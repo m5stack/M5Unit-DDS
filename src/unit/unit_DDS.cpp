@@ -8,8 +8,11 @@
   @brief DDS Unit for M5UnitUnified
 */
 #include "unit_DDS.hpp"
-#include <M5Utility.hpp>
+
 #include <cmath>
+#include <cinttypes>
+
+#include <M5Utility.hpp>
 
 using namespace m5::utility::mmh3;
 using namespace m5::unit::types;
@@ -26,18 +29,18 @@ constexpr uint32_t MAXIMUM_FREQ{1000000};
 // Calculate 28-bit FTW from out[Hz] to be output
 uint32_t calculate_ftw(const uint32_t out_hz)
 {
-    constexpr float scale = static_cast<float>(1ULL << 28);
-    uint32_t ftw          = static_cast<uint32_t>(lroundf(static_cast<float>(out_hz) * scale / MCLK));
+    constexpr float scale{static_cast<float>(1ULL << 28)};
+    const uint32_t ftw{static_cast<uint32_t>(lroundf(static_cast<float>(out_hz) * scale / MCLK))};
     return ftw & 0x0FFFFFFF;
 }
 
 // Calculate 11-bit PHASE from phase[deg]
-// Note (independent testing): The STM32 register accepts 12-bit (bit 11:0), but only
-// 11-bit (2048 steps) is effective for AD9833 output. Verified on hardware 2026-04-02.
+// Note: The STM32 register accepts 12-bit (bit 11:0), but only
+// 11-bit (2048 steps) is effective for AD9833 output (verified on hardware).
 uint16_t calculate_phase(const uint16_t deg)
 {
-    uint16_t d  = deg % 360;
-    uint16_t pw = static_cast<uint16_t>(lround(d * (2048.0f / 360.0f)));
+    const uint16_t d{static_cast<uint16_t>(deg % 360)};
+    const uint16_t pw{static_cast<uint16_t>(lroundf(static_cast<float>(d) * (2048.0f / 360.0f)))};
     return pw & 0x7FF;
 }
 
@@ -62,7 +65,7 @@ bool UnitDDS::begin()
         M5_LIB_LOGE("Failed to read description");
         return false;
     }
-    if (strcmp(desc, DESC)) {
+    if (strcmp(desc, DESC) != 0) {
         M5_LIB_LOGE("Illegal desc [%s]", desc);
         return false;
     }
@@ -78,7 +81,7 @@ bool UnitDDS::readDescription(char str[7])
 
     uint8_t rbuf[6]{};
     if (readRegister(READ_DESCRIPTION_REG, rbuf, m5::stl::size(rbuf), 0)) {
-        memcpy((uint8_t*)str, rbuf, m5::stl::size(rbuf));
+        memcpy(str, rbuf, m5::stl::size(rbuf));
         str[m5::stl::size(rbuf)] = '\0';
         return true;
     }
@@ -90,7 +93,9 @@ bool UnitDDS::readMode(Mode& mode)
     mode = Mode::Reserved;
     uint8_t v{};
     if (readRegister8(MODE_REG, v, 0)) {
-        mode = static_cast<Mode>(v & 0x07);
+        // 6 and 7 are not defined
+        const uint8_t m{static_cast<uint8_t>(v & 0x07)};
+        mode = (m <= m5::stl::to_underlying(Mode::DC)) ? static_cast<Mode>(m) : Mode::Reserved;
         return true;
     }
     return false;
@@ -101,9 +106,11 @@ bool UnitDDS::writeMode(const Mode mode)
     uint8_t v{};
     uint8_t ctrl{};
     if (readRegister8(MODE_REG, v, 0) && read_control(ctrl)) {
-        Mode old        = (Mode)(v & 0x07);
-        bool write_freq = (old == Mode::Sawtooth || old == Mode::DC) && (mode != Mode::Sawtooth && mode != Mode::DC);
-        v               = (v & ~0x07) | m5::stl::to_underlying(mode);
+        // Only compared with Sawtooth/DC, so 6 and 7 need no clamp
+        const Mode old{static_cast<Mode>(v & 0x07)};
+        const bool write_freq{(old == Mode::Sawtooth || old == Mode::DC) &&
+                              (mode != Mode::Sawtooth && mode != Mode::DC)};
+        v = (v & ~0x07) | m5::stl::to_underlying(mode);
         // *** From Firmware Implementation ***
         // Ctrl must also be re-written to reflect the mode change
         // When SAWTOOTH/DC mode is selected, the internal freq is set to 0, so it is set back.
@@ -116,27 +123,27 @@ bool UnitDDS::writeMode(const Mode mode)
 bool UnitDDS::writeFrequency(const bool select, const uint32_t freq)
 {
     if (!is_valid_frequency(freq)) {
-        M5_LIB_LOGE("freq must be between %u and %u (%u)", MINIMUM_FREQ, MAXIMUM_FREQ, freq);
+        M5_LIB_LOGE("freq must be between %" PRIu32 " and %" PRIu32 " (%" PRIu32 ")", MINIMUM_FREQ, MAXIMUM_FREQ, freq);
         return false;
     }
-    uint32_t ftw = calculate_ftw(freq);
+    const uint32_t ftw{calculate_ftw(freq)};
     uint8_t buf[4]{};
     buf[0] = ((ftw >> 24) & 0x0F) | (select ? 0xC0 : 0x80);
     buf[1] = (ftw >> 16) & 0xFF;
     buf[2] = (ftw >> 8) & 0xFF;
     buf[3] = ftw & 0xFF;
 
-    _freq[(int)select] = 0;
+    _freq[select ? 1 : 0] = 0;
     if (!writeRegister(FREQUENCY_REG, buf, m5::stl::size(buf))) {
         return false;
     }
-    _freq[(int)select] = freq;
+    _freq[select ? 1 : 0] = freq;
     return true;
 }
 
 bool UnitDDS::writePhase(const bool select, const uint16_t deg)
 {
-    uint16_t ph = calculate_phase(deg);
+    const uint16_t ph{calculate_phase(deg)};
     uint8_t buf[2]{};
     buf[0] = ((ph >> 8) & 0x07) | (select ? 0xC0 : 0x80);
     buf[1] = ph & 0xFF;
@@ -147,22 +154,22 @@ bool UnitDDS::writeFrequencyAndPhase(const bool select_freq, const uint32_t freq
                                      const uint16_t deg)
 {
     if (!is_valid_frequency(freq)) {
-        M5_LIB_LOGE("freq must be between %u and %u (%u)", MINIMUM_FREQ, MAXIMUM_FREQ, freq);
+        M5_LIB_LOGE("freq must be between %" PRIu32 " and %" PRIu32 " (%" PRIu32 ")", MINIMUM_FREQ, MAXIMUM_FREQ, freq);
         return false;
     }
 
-    uint32_t ftw = calculate_ftw(freq);
-    uint16_t ph  = calculate_phase(deg);
+    const uint32_t ftw{calculate_ftw(freq)};
+    const uint16_t ph{calculate_phase(deg)};
     uint8_t buf[6]{};
-    buf[0]                  = ((ftw >> 24) & 0x0F) | (select_freq ? 0xC0 : 0x80);
-    buf[1]                  = (ftw >> 16) & 0xFF;
-    buf[2]                  = (ftw >> 8) & 0xFF;
-    buf[3]                  = ftw & 0xFF;
-    buf[4]                  = ((ph >> 8) & 0x07) | (select_phase ? 0xC0 : 0x80);
-    buf[5]                  = ph & 0xFF;
-    _freq[(int)select_freq] = 0;
+    buf[0]                     = ((ftw >> 24) & 0x0F) | (select_freq ? 0xC0 : 0x80);
+    buf[1]                     = (ftw >> 16) & 0xFF;
+    buf[2]                     = (ftw >> 8) & 0xFF;
+    buf[3]                     = ftw & 0xFF;
+    buf[4]                     = ((ph >> 8) & 0x07) | (select_phase ? 0xC0 : 0x80);
+    buf[5]                     = ph & 0xFF;
+    _freq[select_freq ? 1 : 0] = 0;
     if (writeRegister(FREQUENCY_REG, buf, m5::stl::size(buf))) {
-        _freq[(int)select_freq] = freq;
+        _freq[select_freq ? 1 : 0] = freq;
         return true;
     }
     return false;
@@ -204,16 +211,13 @@ bool UnitDDS::writeCurrentPhase(const bool select)
 
 bool UnitDDS::writeOutput(const dds::Mode mode, const bool select, const uint32_t freq, const uint16_t deg)
 {
-    if (!is_valid_frequency(freq)) {
-        M5_LIB_LOGE("freq must be between %u and %u (%u)", MINIMUM_FREQ, MAXIMUM_FREQ, freq);
-        return false;
-    }
+    // The frequency is validated in writeFrequencyAndPhase
     return writeFrequencyAndPhase(select, freq, select, deg) && writeMode(mode) && writeCurrent(select, select);
 }
 
-bool UnitDDS::sleep(const bool mclk, const bool DAC)
+bool UnitDDS::sleep(const bool mclk, const bool dac)
 {
-    if (!mclk && !DAC) {
+    if (!mclk && !dac) {
         M5_LIB_LOGE("Sleep Target must be specified");
         return false;
     }
@@ -222,7 +226,7 @@ bool UnitDDS::sleep(const bool mclk, const bool DAC)
     if (read_control(ctrl)) {
         ctrl &= ~0x18;
         ctrl |= mclk ? 0x10 : 0x00;
-        ctrl |= DAC ? 0x08 : 0x00;
+        ctrl |= dac ? 0x08 : 0x00;
         return write_register8(CONTROL_REG, ctrl);
     }
     return false;
@@ -235,7 +239,7 @@ bool UnitDDS::wakeup()
         ctrl &= ~0x1C;  // SLEEP1,2,RESET to 0
         if (write_register8(CONTROL_REG, ctrl)) {
             // DAC outputs are enabled and updated 7 to 8 MCLK cycles after the RESET bit is set back to 0
-            // About 0.8 us if MCLK is 10Mhz
+            // About 0.8 us if MCLK is 10 MHz
             m5::utility::delayMicroseconds(2);  // A little longer
             return true;
         }
